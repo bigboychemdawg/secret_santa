@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data:/app/data
+    restart: always
+    environment:
+      - BOT_API_KEY=<REPLACE>
+      - BOT_WEBHOOK_URL=<REPLACE>
+      - BOT_USERNAME=<REPLACE>
+      - TZ=<REPLACE>
+    command: php -S 0.0.0.0:80 bot.php
+
+  worker:
+    build: .
+    volumes:
+      - ./data:/app/data
+    restart: always
+    environment:
+      - BOT_API_KEY=<REPLACE>
+      - TZ=<REPLACE>
+    command: php worker.php
