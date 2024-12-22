@@ -69,6 +69,16 @@ function handleStartCommand($telegram, $db, $text, $chatId, $name)
             // Извлекаем дату и время из названия таблицы
             $formattedDateTime = extractDateTimeFromTableName($tableName);
 
+            // Проверяем, существует ли пользователь в таблице события
+            $checkUserStmt = $db->prepare("SELECT id FROM [$tableName] WHERE tg_name = :tg_name");
+            $checkUserStmt->bindValue(':tg_name', $name, SQLITE3_TEXT);
+            $userExists = $checkUserStmt->execute()->fetchArray();
+
+            if ($userExists) {
+                $telegram->sendMessage($chatId, 'Вы уже зарегистрированы в этом событии.');
+                return;
+            }
+
             // Получаем владельца события
             $ownerName = getEventOwner($db, $tableName);
 
